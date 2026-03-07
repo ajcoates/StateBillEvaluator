@@ -298,7 +298,18 @@ struct RankingColumn: View {
                                             .foregroundStyle(color)
                                             .clipShape(Capsule())
                                             .help("Weighted score based on passage likelihood")
-                                        Button {
+                                        HStack(spacing: 2) {
+                                            Text("\(company.count) bill\(company.count == 1 ? "" : "s")")
+                                            Image(systemName: expandedCompanies.contains(company.id) ? "chevron.up" : "chevron.down")
+                                                .imageScale(.small)
+                                        }
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 3)
+                                        .background(Color.secondary.opacity(0.1))
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                                        .onTapGesture {
                                             withAnimation(.easeInOut(duration: 0.2)) {
                                                 if expandedCompanies.contains(company.id) {
                                                     expandedCompanies.remove(company.id)
@@ -306,16 +317,7 @@ struct RankingColumn: View {
                                                     expandedCompanies.insert(company.id)
                                                 }
                                             }
-                                        } label: {
-                                            HStack(spacing: 2) {
-                                                Text("\(company.count) bill\(company.count == 1 ? "" : "s")")
-                                                Image(systemName: expandedCompanies.contains(company.id) ? "chevron.up" : "chevron.down")
-                                                    .imageScale(.small)
-                                            }
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
                                         }
-                                        .buttonStyle(.plain)
                                     }
 
                                     HStack(spacing: 4) {
