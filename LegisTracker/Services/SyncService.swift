@@ -64,6 +64,9 @@ final class SyncService {
                 existingBill.lastAction = summary.last_action
                 existingBill.lastActionDate = summary.last_action_date
                 existingBill.lastUpdated = .now
+                if let url = summary.url, !url.isEmpty {
+                    existingBill.url = url
+                }
                 if existingBill.categoryName == nil {
                     uncategorizedBills.append(existingBill)
                 }

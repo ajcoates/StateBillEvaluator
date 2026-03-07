@@ -83,6 +83,7 @@ struct SyncSheetView: View {
     @Bindable var viewModel: LegislationViewModel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @State private var syncComplete = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -113,6 +114,20 @@ struct SyncSheetView: View {
                 }
             }
 
+            if syncComplete && !viewModel.isSyncing {
+                VStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .font(.title2)
+                    Text("Sync complete")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                    Text("Fetched \(viewModel.syncProgress.fetchedBills) bills, categorized \(viewModel.syncProgress.categorizedBills) new")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             if let error = viewModel.errorMessage {
                 Text(error)
                     .foregroundStyle(.red)
@@ -120,21 +135,23 @@ struct SyncSheetView: View {
             }
 
             HStack {
-                Button("Cancel") {
+                Button(syncComplete ? "Done" : "Cancel") {
                     dismiss()
                 }
-                .keyboardShortcut(.cancelAction)
+                .keyboardShortcut(syncComplete ? .defaultAction : .cancelAction)
 
-                Button("Start Sync") {
-                    Task {
-                        await viewModel.startSync(modelContext: modelContext)
-                        if viewModel.errorMessage == nil {
-                            dismiss()
+                if !syncComplete {
+                    Button("Start Sync") {
+                        Task {
+                            await viewModel.startSync(modelContext: modelContext)
+                            if viewModel.errorMessage == nil {
+                                syncComplete = true
+                            }
                         }
                     }
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(viewModel.isSyncing || viewModel.syncSearchQuery.isEmpty)
                 }
-                .keyboardShortcut(.defaultAction)
-                .disabled(viewModel.isSyncing || viewModel.syncSearchQuery.isEmpty)
             }
         }
         .padding()
