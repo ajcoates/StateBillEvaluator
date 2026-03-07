@@ -4,6 +4,13 @@ import SwiftData
 struct CompanyRankingsView: View {
     @Query private var allBills: [Bill]
     @State private var activeCategories: Set<String> = Set(BillCategory.predefinedCategories)
+    @State private var companyScaleFilter: CompanyScaleFilter = .all
+
+    enum CompanyScaleFilter: String, CaseIterable {
+        case all = "All Companies"
+        case localRegional = "Local & Regional"
+        case nationalGlobal = "National & Global"
+    }
 
     private var rankings: (gainers: [CompanyRanking], losers: [CompanyRanking]) {
         var gainerCounts: [String: CompanyRanking] = [:]
@@ -24,8 +31,8 @@ struct CompanyRankingsView: View {
             let weight = CompanyRanking.weight(for: bill.passageLikelihood)
 
             for entry in analysis.winners {
-                for company in entry.companies {
-                    let key = company.lowercased()
+                for detail in entry.resolvedDetails {
+                    let key = detail.name.lowercased()
                     if var existing = gainerCounts[key] {
                         existing.count += 1
                         existing.score += weight
@@ -34,19 +41,20 @@ struct CompanyRankingsView: View {
                         gainerCounts[key] = existing
                     } else {
                         gainerCounts[key] = CompanyRanking(
-                            name: company,
+                            name: detail.name,
                             count: 1,
                             score: weight,
                             industries: [entry.industry],
-                            billTitles: [bill.title]
+                            billTitles: [bill.title],
+                            isLargeCap: detail.isLargeCap
                         )
                     }
                 }
             }
 
             for entry in analysis.losers {
-                for company in entry.companies {
-                    let key = company.lowercased()
+                for detail in entry.resolvedDetails {
+                    let key = detail.name.lowercased()
                     if var existing = loserCounts[key] {
                         existing.count += 1
                         existing.score += weight
@@ -55,19 +63,35 @@ struct CompanyRankingsView: View {
                         loserCounts[key] = existing
                     } else {
                         loserCounts[key] = CompanyRanking(
-                            name: company,
+                            name: detail.name,
                             count: 1,
                             score: weight,
                             industries: [entry.industry],
-                            billTitles: [bill.title]
+                            billTitles: [bill.title],
+                            isLargeCap: detail.isLargeCap
                         )
                     }
                 }
             }
         }
 
-        let sortedGainers = gainerCounts.values.sorted { $0.score > $1.score }
-        let sortedLosers = loserCounts.values.sorted { $0.score > $1.score }
+        let filterGainers: [CompanyRanking]
+        let filterLosers: [CompanyRanking]
+
+        switch companyScaleFilter {
+        case .all:
+            filterGainers = Array(gainerCounts.values)
+            filterLosers = Array(loserCounts.values)
+        case .localRegional:
+            filterGainers = gainerCounts.values.filter { !$0.isLargeCap }
+            filterLosers = loserCounts.values.filter { !$0.isLargeCap }
+        case .nationalGlobal:
+            filterGainers = gainerCounts.values.filter { $0.isLargeCap }
+            filterLosers = loserCounts.values.filter { $0.isLargeCap }
+        }
+
+        let sortedGainers = filterGainers.sorted { $0.score > $1.score }
+        let sortedLosers = filterLosers.sorted { $0.score > $1.score }
         return (sortedGainers, sortedLosers)
     }
 
@@ -117,6 +141,20 @@ struct CompanyRankingsView: View {
                             }
                             .toggleStyle(.checkbox)
                         }
+
+                        Divider()
+                            .padding(.vertical, 8)
+
+                        Text("Company Size")
+                            .font(.headline)
+                            .padding(.bottom, 4)
+
+                        Picker("Scale", selection: $companyScaleFilter) {
+                            ForEach(CompanyScaleFilter.allCases, id: \.self) { filter in
+                                Text(filter.rawValue).tag(filter)
+                            }
+                        }
+                        .pickerStyle(.radioGroup)
                     }
                     .padding()
                 }
@@ -184,6 +222,7 @@ struct CompanyRanking: Identifiable {
     var score: Double
     var industries: Set<String>
     var billTitles: [String]
+    var isLargeCap: Bool
 
     var id: String { name.lowercased() }
 

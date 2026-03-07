@@ -83,14 +83,16 @@ actor ClaudeService {
         Respond with ONLY valid JSON in this exact format, no other text:
         {
           "winners": [
-            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "reason": "Brief explanation"}
+            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "company_details": [{"name": "Company1", "scale": "global"}, {"name": "Company2", "scale": "regional"}], "reason": "Brief explanation"}
           ],
           "losers": [
-            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "reason": "Brief explanation"}
+            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "company_details": [{"name": "Company1", "scale": "national"}, {"name": "Company2", "scale": "local"}], "reason": "Brief explanation"}
           ]
         }
 
-        Include 2-4 entries for each of winners and losers. List 1-3 well-known public companies per industry where applicable. If no specific companies are relevant, use an empty array for companies.
+        For "scale", use one of: "local" (single city/county), "regional" (multi-state or single state), "national" (US-wide), or "global" (multinational).
+
+        Include 2-4 entries for each of winners and losers. List 1-3 well-known public companies per industry where applicable, including a mix of large and smaller regional companies when relevant. If no specific companies are relevant, use empty arrays for companies and company_details.
         """
 
         let requestBody = ClaudeRequest(
