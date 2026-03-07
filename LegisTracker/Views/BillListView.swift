@@ -27,11 +27,14 @@ struct BillListView: View {
 
                 Toggle("Passed", isOn: $viewModel.showPassedOnly)
                     .toggleStyle(.checkbox)
+                    .fixedSize()
 
-                Picker("Sort", selection: $viewModel.sortOrder) {
+                Picker(selection: $viewModel.sortOrder) {
                     ForEach(LegislationViewModel.SortOrder.allCases, id: \.self) { order in
                         Text(order.rawValue).tag(order)
                     }
+                } label: {
+                    EmptyView()
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 250)
