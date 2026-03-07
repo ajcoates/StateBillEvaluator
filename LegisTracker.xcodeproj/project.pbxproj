@@ -13,6 +13,7 @@
 		4BB811471A2D398C731EBB7C /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685E4D5D3ECB38F36C111D81 /* Bill.swift */; };
 		5A9374C329874E7542711D2E /* LegisTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522198A658DE46ECC712940 /* LegisTrackerApp.swift */; };
 		6E7FA493DB05A9D84B8B667B /* LegislationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CBB61C587AD6F12724CA48 /* LegislationViewModel.swift */; };
+		707ECED94D3DEAC2C5B2FBE3 /* CompanyRankingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6205324ACA7C9DEF5385CFEA /* CompanyRankingsView.swift */; };
 		7DAB08D2D1242B3231B95ED4 /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BB3B2389A291A2BFAC0C65 /* SyncService.swift */; };
 		895B03D6B5525ED05004EA57 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F8912C11FF5BFB7177B80F /* ChatView.swift */; };
 		944B5C540AAB2030F86EC70D /* ImpactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDC69E8D3CFCE22AC97839B /* ImpactView.swift */; };
@@ -34,6 +35,7 @@
 		3EDC69E8D3CFCE22AC97839B /* ImpactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpactView.swift; sourceTree = "<group>"; };
 		43BB3B2389A291A2BFAC0C65 /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
 		6108BD50EDBE262CDE7627E7 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
+		6205324ACA7C9DEF5385CFEA /* CompanyRankingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyRankingsView.swift; sourceTree = "<group>"; };
 		63C814BFE81844EE5E5F2BF9 /* LegisTracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LegisTracker.entitlements; sourceTree = "<group>"; };
 		685E4D5D3ECB38F36C111D81 /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		73DBB3C5FEB0AF25DA2D46D1 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				8145B883C4A3CB38E4604391 /* BillListView.swift */,
 				21F8912C11FF5BFB7177B80F /* ChatView.swift */,
 				DD09DBA7FBE37BE415EBC00F /* CompaniesView.swift */,
+				6205324ACA7C9DEF5385CFEA /* CompanyRankingsView.swift */,
 				3EDC69E8D3CFCE22AC97839B /* ImpactView.swift */,
 				A8411FC2AC419EC503C09BE6 /* MainView.swift */,
 				A988506A6DFB2A040C740357 /* SettingsView.swift */,
@@ -183,6 +186,7 @@
 				895B03D6B5525ED05004EA57 /* ChatView.swift in Sources */,
 				1FDDA413F72F289223AC9C35 /* ClaudeService.swift in Sources */,
 				A81D11169E024B757ACECE7A /* CompaniesView.swift in Sources */,
+				707ECED94D3DEAC2C5B2FBE3 /* CompanyRankingsView.swift in Sources */,
 				A0FC8786D655358E36BD3159 /* ImpactAnalysis.swift in Sources */,
 				944B5C540AAB2030F86EC70D /* ImpactView.swift in Sources */,
 				F4EB6FA32CC9D92FE291E445 /* LegiScanService.swift in Sources */,
