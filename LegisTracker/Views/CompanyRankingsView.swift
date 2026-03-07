@@ -242,6 +242,7 @@ struct RankingColumn: View {
     let icon: String
     let color: Color
     let rankings: [CompanyRanking]
+    @State private var expandedCompanies: Set<String> = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -297,9 +298,24 @@ struct RankingColumn: View {
                                             .foregroundStyle(color)
                                             .clipShape(Capsule())
                                             .help("Weighted score based on passage likelihood")
-                                        Text("\(company.count) bill\(company.count == 1 ? "" : "s")")
+                                        Button {
+                                            withAnimation(.easeInOut(duration: 0.2)) {
+                                                if expandedCompanies.contains(company.id) {
+                                                    expandedCompanies.remove(company.id)
+                                                } else {
+                                                    expandedCompanies.insert(company.id)
+                                                }
+                                            }
+                                        } label: {
+                                            HStack(spacing: 2) {
+                                                Text("\(company.count) bill\(company.count == 1 ? "" : "s")")
+                                                Image(systemName: expandedCompanies.contains(company.id) ? "chevron.up" : "chevron.down")
+                                                    .imageScale(.small)
+                                            }
                                             .font(.caption2)
                                             .foregroundStyle(.secondary)
+                                        }
+                                        .buttonStyle(.plain)
                                     }
 
                                     HStack(spacing: 4) {
@@ -313,16 +329,16 @@ struct RankingColumn: View {
                                         }
                                     }
 
-                                    ForEach(company.billTitles.prefix(3), id: \.self) { title in
-                                        Text(title)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                            .lineLimit(1)
-                                    }
-                                    if company.billTitles.count > 3 {
-                                        Text("+\(company.billTitles.count - 3) more")
-                                            .font(.caption)
-                                            .foregroundStyle(.tertiary)
+                                    if expandedCompanies.contains(company.id) {
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            ForEach(company.billTitles, id: \.self) { title in
+                                                Text(title)
+                                                    .font(.caption)
+                                                    .foregroundStyle(.secondary)
+                                                    .lineLimit(2)
+                                            }
+                                        }
+                                        .padding(.top, 2)
                                     }
                                 }
                             }
