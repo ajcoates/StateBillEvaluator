@@ -124,6 +124,37 @@ struct CompanyRankingsView: View {
             .frame(minWidth: 200, idealWidth: 220, maxWidth: 260)
 
             // Rankings content
+            VStack(spacing: 0) {
+                // Weighting explanation
+                HStack(spacing: 16) {
+                    Text("Scores weighted by passage likelihood:")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    ForEach([
+                        ("Passed", 1.0, Color.blue),
+                        ("High", 0.75, Color.green),
+                        ("Medium", 0.50, Color.yellow),
+                        ("Low", 0.25, Color.red),
+                        ("Dead", 0.05, Color.gray)
+                    ], id: \.0) { label, weight, color in
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(color)
+                                .frame(width: 8, height: 8)
+                            Text("\(label) = \(String(format: "%.2f", weight))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(.bar)
+
+                Divider()
+
             HStack(spacing: 0) {
                 // Gainers
                 RankingColumn(
@@ -142,6 +173,7 @@ struct CompanyRankingsView: View {
                     color: .red,
                     rankings: rankings.losers
                 )
+            }
             }
         }
     }
