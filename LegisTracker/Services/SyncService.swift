@@ -145,7 +145,7 @@ final class SyncService {
 
         bill.billDescription = detail.description ?? bill.billDescription
         bill.status = detail.status_desc ?? bill.status
-        bill.url = detail.state_link ?? detail.url
+        bill.url = detail.url
         bill.session = detail.session?.session_name ?? ""
 
         if let sponsors = detail.sponsors {

@@ -30,6 +30,8 @@ struct CompanyRankingsView: View {
 
             let weight = CompanyRanking.weight(for: bill.passageLikelihood)
 
+            let billLink = (title: bill.title, url: bill.url)
+
             for entry in analysis.winners {
                 for detail in entry.resolvedDetails {
                     let key = detail.name.lowercased()
@@ -37,7 +39,7 @@ struct CompanyRankingsView: View {
                         existing.count += 1
                         existing.score += weight
                         existing.industries.insert(entry.industry)
-                        existing.billTitles.append(bill.title)
+                        existing.billLinks.append(billLink)
                         gainerCounts[key] = existing
                     } else {
                         gainerCounts[key] = CompanyRanking(
@@ -45,7 +47,7 @@ struct CompanyRankingsView: View {
                             count: 1,
                             score: weight,
                             industries: [entry.industry],
-                            billTitles: [bill.title],
+                            billLinks: [billLink],
                             isLargeCap: detail.isLargeCap
                         )
                     }
@@ -59,7 +61,7 @@ struct CompanyRankingsView: View {
                         existing.count += 1
                         existing.score += weight
                         existing.industries.insert(entry.industry)
-                        existing.billTitles.append(bill.title)
+                        existing.billLinks.append(billLink)
                         loserCounts[key] = existing
                     } else {
                         loserCounts[key] = CompanyRanking(
@@ -67,7 +69,7 @@ struct CompanyRankingsView: View {
                             count: 1,
                             score: weight,
                             industries: [entry.industry],
-                            billTitles: [bill.title],
+                            billLinks: [billLink],
                             isLargeCap: detail.isLargeCap
                         )
                     }
@@ -221,7 +223,7 @@ struct CompanyRanking: Identifiable {
     var count: Int
     var score: Double
     var industries: Set<String>
-    var billTitles: [String]
+    var billLinks: [(title: String, url: String)]
     var isLargeCap: Bool
 
     var id: String { name.lowercased() }
@@ -333,11 +335,21 @@ struct RankingColumn: View {
 
                                     if expandedCompanies.contains(company.id) {
                                         VStack(alignment: .leading, spacing: 3) {
-                                            ForEach(company.billTitles, id: \.self) { title in
-                                                Text(title)
-                                                    .font(.caption)
-                                                    .foregroundStyle(.secondary)
-                                                    .lineLimit(2)
+                                            ForEach(Array(company.billLinks.enumerated()), id: \.offset) { _, bill in
+                                                if let url = URL(string: bill.url), !bill.url.isEmpty {
+                                                    Link(destination: url) {
+                                                        Text(bill.title)
+                                                            .font(.caption)
+                                                            .foregroundStyle(.blue)
+                                                            .lineLimit(2)
+                                                            .underline()
+                                                    }
+                                                } else {
+                                                    Text(bill.title)
+                                                        .font(.caption)
+                                                        .foregroundStyle(.secondary)
+                                                        .lineLimit(2)
+                                                }
                                             }
                                         }
                                         .padding(.top, 2)
