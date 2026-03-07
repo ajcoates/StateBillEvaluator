@@ -11,7 +11,7 @@ struct CompanyRankingsView: View {
 
         let filteredBills = allBills.filter { bill in
             guard let cat = bill.categoryName else { return false }
-            return activeCategories.contains(cat)
+            return activeCategories.contains(cat) && bill.passageLikelihood != .passed
         }
 
         for bill in filteredBills {
@@ -127,12 +127,11 @@ struct CompanyRankingsView: View {
             VStack(spacing: 0) {
                 // Weighting explanation
                 HStack(spacing: 16) {
-                    Text("Scores weighted by passage likelihood:")
+                    Text("Predictive scores (passed bills excluded):")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     ForEach([
-                        ("Passed", 1.0, Color.blue),
                         ("High", 0.75, Color.green),
                         ("Medium", 0.50, Color.yellow),
                         ("Low", 0.25, Color.red),
