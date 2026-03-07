@@ -1,0 +1,35 @@
+name: LegisTracker
+options:
+  bundleIdPrefix: com.legisTracker
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.0"
+  minimumXcodeGenVersion: "2.0"
+targets:
+  LegisTracker:
+    type: application
+    platform: macOS
+    sources:
+      - LegisTracker
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.legisTracker.LegisTracker
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.reference"
+        SWIFT_STRICT_CONCURRENCY: minimal
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: NO
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+        Release:
+          SWIFT_COMPILATION_MODE: wholemodule
+    entitlements:
+      path: LegisTracker/LegisTracker.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
