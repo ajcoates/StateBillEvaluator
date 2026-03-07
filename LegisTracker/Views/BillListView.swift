@@ -19,25 +19,48 @@ struct BillListView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Filter bar
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
-                TextField("Filter bills…", text: $viewModel.filterText)
-                    .textFieldStyle(.plain)
+            VStack(spacing: 6) {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField("Filter bills…", text: $viewModel.filterText)
+                        .textFieldStyle(.plain)
 
-                Toggle("Passed", isOn: $viewModel.showPassedOnly)
-                    .toggleStyle(.checkbox)
-                    .fixedSize()
-
-                Picker(selection: $viewModel.sortOrder) {
-                    ForEach(LegislationViewModel.SortOrder.allCases, id: \.self) { order in
-                        Text(order.rawValue).tag(order)
+                    Picker(selection: $viewModel.sortOrder) {
+                        ForEach(LegislationViewModel.SortOrder.allCases, id: \.self) { order in
+                            Text(order.rawValue).tag(order)
+                        }
+                    } label: {
+                        EmptyView()
                     }
-                } label: {
-                    EmptyView()
+                    .pickerStyle(.segmented)
+                    .frame(width: 250)
                 }
-                .pickerStyle(.segmented)
-                .frame(width: 250)
+
+                HStack(spacing: 12) {
+                    ForEach(Bill.PassageLikelihood.allCases, id: \.self) { likelihood in
+                        Toggle(isOn: Binding(
+                            get: { viewModel.activeLikelihoods.contains(likelihood) },
+                            set: { isOn in
+                                if isOn {
+                                    viewModel.activeLikelihoods.insert(likelihood)
+                                } else {
+                                    viewModel.activeLikelihoods.remove(likelihood)
+                                }
+                            }
+                        )) {
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(colorForLikelihood(likelihood))
+                                    .frame(width: 8, height: 8)
+                                Text(likelihood.rawValue)
+                                    .font(.caption)
+                            }
+                        }
+                        .toggleStyle(.checkbox)
+                        .fixedSize()
+                    }
+                }
             }
             .padding(8)
             .background(.bar)
@@ -75,6 +98,16 @@ struct BillListView: View {
             }
         }
         .navigationTitle(viewModel.selectedCategoryName ?? "All Bills")
+    }
+
+    private func colorForLikelihood(_ likelihood: Bill.PassageLikelihood) -> Color {
+        switch likelihood {
+        case .low: return .red
+        case .medium: return .yellow
+        case .high: return .green
+        case .passed: return .blue
+        case .dead: return .gray
+        }
     }
 }
 

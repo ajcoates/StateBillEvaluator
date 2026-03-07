@@ -21,7 +21,7 @@ final class Bill {
     @Relationship(inverse: \BillCategory.bills)
     var category: BillCategory?
 
-    enum PassageLikelihood: String, Codable {
+    enum PassageLikelihood: String, Codable, CaseIterable, Hashable {
         case low = "Low"
         case medium = "Medium"
         case high = "High"

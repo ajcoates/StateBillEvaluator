@@ -16,7 +16,7 @@ final class LegislationViewModel {
     var errorMessage: String?
     var sortOrder: SortOrder = .byState
     var filterText: String = ""
-    var showPassedOnly: Bool = false
+    var activeLikelihoods: Set<Bill.PassageLikelihood> = Set(Bill.PassageLikelihood.allCases)
     var showingSyncSheet: Bool = false
 
     private let syncService = SyncService()
@@ -119,8 +119,8 @@ final class LegislationViewModel {
     func filteredAndSortedBills(_ bills: [Bill]) -> [Bill] {
         var result = bills
 
-        if showPassedOnly {
-            result = result.filter { $0.passageLikelihood == .passed || $0.passageLikelihood == .high }
+        if activeLikelihoods.count < Bill.PassageLikelihood.allCases.count {
+            result = result.filter { activeLikelihoods.contains($0.passageLikelihood) }
         }
 
         if !filterText.isEmpty {
