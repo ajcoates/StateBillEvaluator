@@ -21,11 +21,14 @@ struct CompanyRankingsView: View {
                 continue
             }
 
+            let weight = CompanyRanking.weight(for: bill.passageLikelihood)
+
             for entry in analysis.winners {
                 for company in entry.companies {
                     let key = company.lowercased()
                     if var existing = gainerCounts[key] {
                         existing.count += 1
+                        existing.score += weight
                         existing.industries.insert(entry.industry)
                         existing.billTitles.append(bill.title)
                         gainerCounts[key] = existing
@@ -33,6 +36,7 @@ struct CompanyRankingsView: View {
                         gainerCounts[key] = CompanyRanking(
                             name: company,
                             count: 1,
+                            score: weight,
                             industries: [entry.industry],
                             billTitles: [bill.title]
                         )
@@ -45,6 +49,7 @@ struct CompanyRankingsView: View {
                     let key = company.lowercased()
                     if var existing = loserCounts[key] {
                         existing.count += 1
+                        existing.score += weight
                         existing.industries.insert(entry.industry)
                         existing.billTitles.append(bill.title)
                         loserCounts[key] = existing
@@ -52,6 +57,7 @@ struct CompanyRankingsView: View {
                         loserCounts[key] = CompanyRanking(
                             name: company,
                             count: 1,
+                            score: weight,
                             industries: [entry.industry],
                             billTitles: [bill.title]
                         )
@@ -60,8 +66,8 @@ struct CompanyRankingsView: View {
             }
         }
 
-        let sortedGainers = gainerCounts.values.sorted { $0.count > $1.count }
-        let sortedLosers = loserCounts.values.sorted { $0.count > $1.count }
+        let sortedGainers = gainerCounts.values.sorted { $0.score > $1.score }
+        let sortedLosers = loserCounts.values.sorted { $0.score > $1.score }
         return (sortedGainers, sortedLosers)
     }
 
@@ -144,10 +150,21 @@ struct CompanyRankingsView: View {
 struct CompanyRanking: Identifiable {
     let name: String
     var count: Int
+    var score: Double
     var industries: Set<String>
     var billTitles: [String]
 
     var id: String { name.lowercased() }
+
+    static func weight(for likelihood: Bill.PassageLikelihood) -> Double {
+        switch likelihood {
+        case .passed: return 1.0
+        case .high: return 0.75
+        case .medium: return 0.5
+        case .low: return 0.25
+        case .dead: return 0.05
+        }
+    }
 }
 
 struct RankingColumn: View {
@@ -201,13 +218,18 @@ struct RankingColumn: View {
                                             .font(.body)
                                             .fontWeight(.semibold)
                                         Spacer()
-                                        Text("\(company.count) bill\(company.count == 1 ? "" : "s")")
+                                        Text(String(format: "%.2f", company.score))
                                             .font(.caption)
+                                            .fontWeight(.semibold)
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 2)
                                             .background(color.opacity(0.15))
                                             .foregroundStyle(color)
                                             .clipShape(Capsule())
+                                            .help("Weighted score based on passage likelihood")
+                                        Text("\(company.count) bill\(company.count == 1 ? "" : "s")")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
                                     }
 
                                     HStack(spacing: 4) {
