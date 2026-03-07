@@ -23,6 +23,11 @@ struct MainView: View {
 
             ImpactView(viewModel: viewModel)
                 .frame(width: 320)
+
+            Divider()
+
+            CompaniesView(viewModel: viewModel)
+                .frame(width: 260)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $viewModel.showingSyncSheet) {

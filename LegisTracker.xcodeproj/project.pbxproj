@@ -18,6 +18,7 @@
 		944B5C540AAB2030F86EC70D /* ImpactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDC69E8D3CFCE22AC97839B /* ImpactView.swift */; };
 		9E861ED7C7FC5E035BB70454 /* BillDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CEB9F8D06FCC19F56E26AC /* BillDetailView.swift */; };
 		A0FC8786D655358E36BD3159 /* ImpactAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5F0AEFB874CAC8F2D0986E /* ImpactAnalysis.swift */; };
+		A81D11169E024B757ACECE7A /* CompaniesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD09DBA7FBE37BE415EBC00F /* CompaniesView.swift */; };
 		B2031A260FA9BEB87431434D /* BillListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8145B883C4A3CB38E4604391 /* BillListView.swift */; };
 		B8B3367F3B001BB4F277C88D /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DBB3C5FEB0AF25DA2D46D1 /* APIModels.swift */; };
 		F15F2A58A28C4EAD47057BBE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A988506A6DFB2A040C740357 /* SettingsView.swift */; };
@@ -44,6 +45,7 @@
 		A988506A6DFB2A040C740357 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C522198A658DE46ECC712940 /* LegisTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegisTrackerApp.swift; sourceTree = "<group>"; };
 		DCAD1236722DB6778BA9E0D7 /* LegiScanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegiScanService.swift; sourceTree = "<group>"; };
+		DD09DBA7FBE37BE415EBC00F /* CompaniesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompaniesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -103,6 +105,7 @@
 				16CEB9F8D06FCC19F56E26AC /* BillDetailView.swift */,
 				8145B883C4A3CB38E4604391 /* BillListView.swift */,
 				21F8912C11FF5BFB7177B80F /* ChatView.swift */,
+				DD09DBA7FBE37BE415EBC00F /* CompaniesView.swift */,
 				3EDC69E8D3CFCE22AC97839B /* ImpactView.swift */,
 				A8411FC2AC419EC503C09BE6 /* MainView.swift */,
 				A988506A6DFB2A040C740357 /* SettingsView.swift */,
@@ -179,6 +182,7 @@
 				49FB9F022B14A0519FA1A41C /* Category.swift in Sources */,
 				895B03D6B5525ED05004EA57 /* ChatView.swift in Sources */,
 				1FDDA413F72F289223AC9C35 /* ClaudeService.swift in Sources */,
+				A81D11169E024B757ACECE7A /* CompaniesView.swift in Sources */,
 				A0FC8786D655358E36BD3159 /* ImpactAnalysis.swift in Sources */,
 				944B5C540AAB2030F86EC70D /* ImpactView.swift in Sources */,
 				F4EB6FA32CC9D92FE291E445 /* LegiScanService.swift in Sources */,
