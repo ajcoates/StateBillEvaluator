@@ -150,6 +150,47 @@ actor ClaudeService {
         }
     }
 
+    func chat(messages: [ClaudeMessage], systemPrompt: String? = nil) async throws -> String {
+        guard !apiKey.isEmpty else {
+            throw ClaudeError.missingAPIKey
+        }
+
+        var body: [String: Any] = [
+            "model": "claude-sonnet-4-5-20250929",
+            "max_tokens": 1024,
+            "messages": messages.map { ["role": $0.role, "content": $0.content] }
+        ]
+
+        if let systemPrompt {
+            body["system"] = systemPrompt
+        }
+
+        var request = URLRequest(url: URL(string: baseURL)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ClaudeError.invalidResponse
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            throw ClaudeError.httpError(httpResponse.statusCode)
+        }
+
+        let claudeResponse = try JSONDecoder().decode(ClaudeResponse.self, from: data)
+
+        guard let text = claudeResponse.content.first?.text else {
+            throw ClaudeError.noContent
+        }
+
+        return text
+    }
+
     func categorizeBills(_ bills: [(title: String, description: String)]) async throws -> [String] {
         var results: [String] = []
         for bill in bills {

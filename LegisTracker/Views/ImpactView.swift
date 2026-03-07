@@ -6,16 +6,22 @@ struct ImpactView: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
-        Group {
-            if let bill = viewModel.selectedBill {
-                ImpactContentView(bill: bill, viewModel: viewModel, modelContext: modelContext)
-            } else {
-                ContentUnavailableView {
-                    Label("Impact Analysis", systemImage: "chart.bar")
-                } description: {
-                    Text("Select a bill to see which industries and companies would be affected.")
+        VSplitView {
+            Group {
+                if let bill = viewModel.selectedBill {
+                    ImpactContentView(bill: bill, viewModel: viewModel, modelContext: modelContext)
+                } else {
+                    ContentUnavailableView {
+                        Label("Impact Analysis", systemImage: "chart.bar")
+                    } description: {
+                        Text("Select a bill to see which industries and companies would be affected.")
+                    }
                 }
             }
+            .frame(minHeight: 200)
+
+            ChatView(viewModel: viewModel)
+                .frame(minHeight: 150, idealHeight: 250)
         }
         .frame(minWidth: 280)
     }
