@@ -21,7 +21,7 @@ struct SidebarView: View {
             }
         }
         .listStyle(.sidebar)
-        .navigationTitle("LegisTracker")
+        .navigationTitle("State Bill Evaluator")
     }
 
     private var categoriesWithBills: [BillCategory] {

@@ -19,6 +19,8 @@ targets:
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "State Bill Evaluator"
+        PRODUCT_NAME: "State Bill Evaluator"
         INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.reference"
         SWIFT_STRICT_CONCURRENCY: minimal
         CODE_SIGN_IDENTITY: "-"
