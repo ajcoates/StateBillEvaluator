@@ -116,6 +116,35 @@ final class LegislationViewModel {
         try? modelContext.save()
     }
 
+    func exportCSV(bills: [Bill]) -> String {
+        var csv = "Bill ID,Title,State,Category,Status,Session,Likelihood,Last Action,Last Action Date,Sponsors,URL,Description\n"
+        for bill in bills {
+            let fields: [String] = [
+                String(bill.billId),
+                csvEscape(bill.title),
+                bill.state,
+                csvEscape(bill.categoryName ?? ""),
+                csvEscape(bill.status),
+                csvEscape(bill.session),
+                bill.passageLikelihood.rawValue,
+                csvEscape(bill.lastAction ?? ""),
+                bill.lastActionDate ?? "",
+                csvEscape(bill.sponsors ?? ""),
+                bill.url,
+                csvEscape(bill.billDescription)
+            ]
+            csv += fields.joined(separator: ",") + "\n"
+        }
+        return csv
+    }
+
+    private func csvEscape(_ value: String) -> String {
+        if value.contains(",") || value.contains("\"") || value.contains("\n") {
+            return "\"" + value.replacingOccurrences(of: "\"", with: "\"\"") + "\""
+        }
+        return value
+    }
+
     func filteredAndSortedBills(_ bills: [Bill]) -> [Bill] {
         var result = bills
 

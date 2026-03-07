@@ -4,6 +4,8 @@ import SwiftData
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = LegislationViewModel()
+    @Query private var allBills: [Bill]
+    @State private var showingExportError = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -37,9 +39,35 @@ struct MainView: View {
             }
             ToolbarItem(placement: .automatic) {
                 Button {
+                    exportBills()
+                } label: {
+                    Label("Export CSV", systemImage: "square.and.arrow.up")
+                }
+                .disabled(allBills.isEmpty)
+            }
+            ToolbarItem(placement: .automatic) {
+                Button {
                     viewModel.loadSampleData(modelContext: modelContext)
                 } label: {
                     Label("Load Sample Data", systemImage: "doc.badge.plus")
+                }
+            }
+        }
+    }
+    private func exportBills() {
+        let csv = viewModel.exportCSV(bills: allBills)
+
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.commaSeparatedText]
+        panel.nameFieldStringValue = "bills_export.csv"
+        panel.title = "Export Bills"
+
+        panel.begin { response in
+            if response == .OK, let url = panel.url {
+                do {
+                    try csv.write(to: url, atomically: true, encoding: .utf8)
+                } catch {
+                    print("Export error: \(error)")
                 }
             }
         }
