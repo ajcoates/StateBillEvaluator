@@ -18,15 +18,33 @@ struct ImpactEntry: Codable, Identifiable {
         if let details = company_details, !details.isEmpty {
             return details
         }
-        return companies.map { CompanyDetail(name: $0, scale: CompanyDetail.classifyFallback($0)) }
+        return companies.map { CompanyDetail(name: $0, scale: CompanyDetail.classifyFallback($0), ticker: nil) }
     }
 }
 
 struct CompanyDetail: Codable, Identifiable {
     let name: String
     let scale: String // "local", "regional", "national", "global"
+    let ticker: String?
 
     var id: String { name }
+
+    init(name: String, scale: String, ticker: String? = nil) {
+        self.name = name
+        self.scale = scale
+        self.ticker = ticker
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        scale = try container.decode(String.self, forKey: .scale)
+        ticker = try container.decodeIfPresent(String.self, forKey: .ticker)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case name, scale, ticker
+    }
 
     var isLargeCap: Bool {
         scale == "national" || scale == "global"

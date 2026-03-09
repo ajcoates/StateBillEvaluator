@@ -40,6 +40,7 @@ struct CompanyRankingsView: View {
                         existing.score += weight
                         existing.industries.insert(entry.industry)
                         existing.billLinks.append(billLink)
+                        if existing.ticker == nil { existing.ticker = detail.ticker }
                         gainerCounts[key] = existing
                     } else {
                         gainerCounts[key] = CompanyRanking(
@@ -48,7 +49,8 @@ struct CompanyRankingsView: View {
                             score: weight,
                             industries: [entry.industry],
                             billLinks: [billLink],
-                            isLargeCap: detail.isLargeCap
+                            isLargeCap: detail.isLargeCap,
+                            ticker: detail.ticker
                         )
                     }
                 }
@@ -62,6 +64,7 @@ struct CompanyRankingsView: View {
                         existing.score += weight
                         existing.industries.insert(entry.industry)
                         existing.billLinks.append(billLink)
+                        if existing.ticker == nil { existing.ticker = detail.ticker }
                         loserCounts[key] = existing
                     } else {
                         loserCounts[key] = CompanyRanking(
@@ -70,7 +73,8 @@ struct CompanyRankingsView: View {
                             score: weight,
                             industries: [entry.industry],
                             billLinks: [billLink],
-                            isLargeCap: detail.isLargeCap
+                            isLargeCap: detail.isLargeCap,
+                            ticker: detail.ticker
                         )
                     }
                 }
@@ -225,6 +229,7 @@ struct CompanyRanking: Identifiable {
     var industries: Set<String>
     var billLinks: [(title: String, url: String)]
     var isLargeCap: Bool
+    var ticker: String?
 
     var id: String { name.lowercased() }
 
@@ -290,6 +295,15 @@ struct RankingColumn: View {
                                         Text(company.name)
                                             .font(.body)
                                             .fontWeight(.semibold)
+                                        if let ticker = company.ticker {
+                                            Text(ticker)
+                                                .font(.caption2)
+                                                .foregroundStyle(.secondary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(Color.secondary.opacity(0.15))
+                                                .clipShape(Capsule())
+                                        }
                                         Spacer()
                                         Text(String(format: "%.2f", company.score))
                                             .font(.caption)

@@ -80,11 +80,12 @@ struct CompaniesView: View {
     private func extractCompanies(from entries: [ImpactEntry]) -> [CompanyInfo] {
         var result: [CompanyInfo] = []
         for entry in entries {
-            for company in entry.companies {
+            for detail in entry.resolvedDetails {
                 result.append(CompanyInfo(
-                    name: company,
+                    name: detail.name,
                     industry: entry.industry,
-                    reason: entry.reason
+                    reason: entry.reason,
+                    ticker: detail.ticker
                 ))
             }
         }
@@ -96,6 +97,7 @@ struct CompanyInfo: Identifiable {
     let name: String
     let industry: String
     let reason: String
+    var ticker: String?
     var id: String { "\(name)-\(industry)" }
 }
 
@@ -114,9 +116,20 @@ struct CompanySection: View {
 
             ForEach(companies) { company in
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(company.name)
-                        .font(.body)
-                        .fontWeight(.medium)
+                    HStack(spacing: 6) {
+                        Text(company.name)
+                            .font(.body)
+                            .fontWeight(.medium)
+                        if let ticker = company.ticker {
+                            Text(ticker)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.secondary.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                    }
 
                     Text(company.industry)
                         .font(.caption)
