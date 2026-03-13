@@ -8,7 +8,34 @@ actor LegiScanService {
     }
 
     func searchBills(query: String, state: String? = nil) async throws -> [LegiScanBillSummary] {
-        var params = ["op": "getSearch", "query": query]
+        // Fetch the first page to get pagination info
+        let firstPageBills = try await searchBillsPage(query: query, state: state, page: 1)
+
+        guard let summary = firstPageBills.summary,
+              let totalStr = summary.page_total?.stringValue,
+              let totalPages = Int(totalStr),
+              totalPages > 1 else {
+            return firstPageBills.bills
+        }
+
+        // Fetch remaining pages in parallel
+        var allBills = firstPageBills.bills
+        try await withThrowingTaskGroup(of: [LegiScanBillSummary].self) { group in
+            for page in 2...totalPages {
+                group.addTask {
+                    try await self.searchBillsPage(query: query, state: state, page: page).bills
+                }
+            }
+            for try await pageBills in group {
+                allBills.append(contentsOf: pageBills)
+            }
+        }
+
+        return allBills
+    }
+
+    private func searchBillsPage(query: String, state: String? = nil, page: Int) async throws -> (bills: [LegiScanBillSummary], summary: SearchSummary?) {
+        var params = ["op": "getSearch", "query": query, "page": String(page)]
         if let state = state, !state.isEmpty {
             params["state"] = state
         }
@@ -16,9 +43,8 @@ actor LegiScanService {
         let data = try await request(params: params)
         do {
             let response = try JSONDecoder().decode(LegiScanSearchResponse.self, from: data)
-            return Array(response.searchresult.bills.values)
+            return (Array(response.searchresult.bills.values), response.searchresult.summary)
         } catch {
-            // Log the raw response for debugging
             if let raw = String(data: data, encoding: .utf8) {
                 print("LegiScan raw response: \(raw.prefix(2000))")
             }

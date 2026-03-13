@@ -5,11 +5,17 @@ struct CompanyRankingsView: View {
     @Query private var allBills: [Bill]
     @State private var activeCategories: Set<String> = Set(BillCategory.predefinedCategories)
     @State private var companyScaleFilter: CompanyScaleFilter = .all
+    @State private var sortOrder: RankingSortOrder = .score
 
     enum CompanyScaleFilter: String, CaseIterable {
         case all = "All Companies"
         case localRegional = "Local & Regional"
         case nationalGlobal = "National & Global"
+    }
+
+    enum RankingSortOrder: String, CaseIterable {
+        case score = "Weighted Score"
+        case billCount = "Number of Bills"
     }
 
     private var rankings: (gainers: [CompanyRanking], losers: [CompanyRanking]) {
@@ -96,8 +102,15 @@ struct CompanyRankingsView: View {
             filterLosers = loserCounts.values.filter { $0.isLargeCap }
         }
 
-        let sortedGainers = filterGainers.sorted { $0.score > $1.score }
-        let sortedLosers = filterLosers.sorted { $0.score > $1.score }
+        let sorter: (CompanyRanking, CompanyRanking) -> Bool
+        switch sortOrder {
+        case .score:
+            sorter = { $0.score > $1.score }
+        case .billCount:
+            sorter = { $0.count > $1.count }
+        }
+        let sortedGainers = filterGainers.sorted(by: sorter)
+        let sortedLosers = filterLosers.sorted(by: sorter)
         return (sortedGainers, sortedLosers)
     }
 
@@ -158,6 +171,20 @@ struct CompanyRankingsView: View {
                         Picker("Scale", selection: $companyScaleFilter) {
                             ForEach(CompanyScaleFilter.allCases, id: \.self) { filter in
                                 Text(filter.rawValue).tag(filter)
+                            }
+                        }
+                        .pickerStyle(.radioGroup)
+
+                        Divider()
+                            .padding(.vertical, 8)
+
+                        Text("Sort By")
+                            .font(.headline)
+                            .padding(.bottom, 4)
+
+                        Picker("Sort By", selection: $sortOrder) {
+                            ForEach(RankingSortOrder.allCases, id: \.self) { order in
+                                Text(order.rawValue).tag(order)
                             }
                         }
                         .pickerStyle(.radioGroup)
