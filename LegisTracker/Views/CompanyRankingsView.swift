@@ -377,19 +377,24 @@ struct RankingColumn: View {
                                     if expandedCompanies.contains(company.id) {
                                         VStack(alignment: .leading, spacing: 3) {
                                             ForEach(Array(company.billLinks.enumerated()), id: \.offset) { _, bill in
-                                                if let url = URL(string: bill.url), !bill.url.isEmpty {
-                                                    Link(destination: url) {
-                                                        Text(bill.title)
-                                                            .font(.caption)
-                                                            .foregroundStyle(.blue)
-                                                            .lineLimit(2)
-                                                            .underline()
-                                                    }
-                                                } else {
-                                                    Text(bill.title)
+                                                HStack(alignment: .top, spacing: 6) {
+                                                    Text("\u{2022}")
                                                         .font(.caption)
                                                         .foregroundStyle(.secondary)
-                                                        .lineLimit(2)
+                                                    if let url = URL(string: bill.url), !bill.url.isEmpty {
+                                                        Link(destination: url) {
+                                                            Text(bill.title)
+                                                                .font(.caption)
+                                                                .foregroundStyle(.blue)
+                                                                .lineLimit(2)
+                                                                .underline()
+                                                        }
+                                                    } else {
+                                                        Text(bill.title)
+                                                            .font(.caption)
+                                                            .foregroundStyle(.secondary)
+                                                            .lineLimit(2)
+                                                    }
                                                 }
                                             }
                                         }
