@@ -18,6 +18,8 @@ final class LegislationViewModel {
     var filterText: String = ""
     var activeLikelihoods: Set<Bill.PassageLikelihood> = Set(Bill.PassageLikelihood.allCases)
     var showingSyncSheet: Bool = false
+    var isReanalyzing: Bool = false
+    var reanalyzeProgress: (current: Int, total: Int) = (0, 0)
 
     private let syncService = SyncService()
 
@@ -52,6 +54,37 @@ final class LegislationViewModel {
         }
 
         isSyncing = false
+    }
+
+    func reanalyzeAllBills(bills: [Bill], modelContext: ModelContext) async {
+        guard !isReanalyzing else { return }
+        isReanalyzing = true
+        errorMessage = nil
+
+        let billsWithAnalysis = bills.filter { $0.impactAnalysisJSON != nil }
+        reanalyzeProgress = (0, billsWithAnalysis.count)
+
+        let claude = ClaudeService()
+        for bill in billsWithAnalysis {
+            do {
+                let result = try await claude.analyzeImpact(
+                    title: bill.title,
+                    description: bill.billDescription
+                )
+                if let jsonData = try? JSONEncoder().encode(result),
+                   let jsonString = String(data: jsonData, encoding: .utf8) {
+                    bill.impactAnalysisJSON = jsonString
+                }
+                reanalyzeProgress.current += 1
+                try await Task.sleep(for: .milliseconds(300))
+            } catch {
+                errorMessage = "Failed on \(bill.title.prefix(40))…: \(error.localizedDescription)"
+                break
+            }
+        }
+
+        try? modelContext.save()
+        isReanalyzing = false
     }
 
     func fetchBillDetail(bill: Bill, modelContext: ModelContext) async {

@@ -92,7 +92,7 @@ actor ClaudeService {
 
         For "scale", use one of: "local" (single city/county), "regional" (multi-state or single state), "national" (US-wide), or "global" (multinational).
 
-        For "ticker", provide the stock ticker symbol (e.g. "AMZN", "AAPL") if the company is publicly traded, or null if it is private.
+        For "ticker", you MUST provide the stock ticker symbol for any publicly traded company. Common examples: "AMZN" (Amazon), "AAPL" (Apple), "UBER" (Uber), "LYFT" (Lyft), "GOOGL" (Google/Alphabet), "TSLA" (Tesla). Only use null for genuinely private companies.
 
         For "parent_company" and "parent_ticker": if a company is private (ticker is null) but owned by a publicly traded parent company, provide the parent's name and ticker symbol (e.g. Instagram would have parent_company "Meta Platforms" and parent_ticker "META"). Otherwise set both to null.
 

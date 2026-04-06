@@ -83,7 +83,13 @@ struct SyncSheetView: View {
     @Bindable var viewModel: LegislationViewModel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query private var allBills: [Bill]
     @State private var syncComplete = false
+    @State private var reanalyzeComplete = false
+
+    private var analyzedBillCount: Int {
+        allBills.filter { $0.impactAnalysisJSON != nil }.count
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -114,6 +120,19 @@ struct SyncSheetView: View {
                 }
             }
 
+            if viewModel.isReanalyzing {
+                VStack(spacing: 8) {
+                    ProgressView()
+                    Text("Re-analyzing impact…")
+                        .font(.caption)
+                    if viewModel.reanalyzeProgress.total > 0 {
+                        Text("\(viewModel.reanalyzeProgress.current)/\(viewModel.reanalyzeProgress.total) bills")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
             if syncComplete && !viewModel.isSyncing {
                 VStack(spacing: 4) {
                     Image(systemName: "checkmark.circle.fill")
@@ -128,6 +147,20 @@ struct SyncSheetView: View {
                 }
             }
 
+            if reanalyzeComplete && !viewModel.isReanalyzing {
+                VStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .font(.title2)
+                    Text("Re-analysis complete")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                    Text("Updated \(viewModel.reanalyzeProgress.current) bills")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             if let error = viewModel.errorMessage {
                 Text(error)
                     .foregroundStyle(.red)
@@ -135,12 +168,23 @@ struct SyncSheetView: View {
             }
 
             HStack {
-                Button(syncComplete ? "Done" : "Cancel") {
+                Button(syncComplete || reanalyzeComplete ? "Done" : "Cancel") {
                     dismiss()
                 }
-                .keyboardShortcut(syncComplete ? .defaultAction : .cancelAction)
+                .keyboardShortcut(syncComplete || reanalyzeComplete ? .defaultAction : .cancelAction)
 
-                if !syncComplete {
+                if !syncComplete && !reanalyzeComplete {
+                    Button("Re-analyze All") {
+                        Task {
+                            await viewModel.reanalyzeAllBills(bills: allBills, modelContext: modelContext)
+                            if viewModel.errorMessage == nil {
+                                reanalyzeComplete = true
+                            }
+                        }
+                    }
+                    .disabled(viewModel.isSyncing || viewModel.isReanalyzing || analyzedBillCount == 0)
+                    .help("Re-run impact analysis on \(analyzedBillCount) bills")
+
                     Button("Start Sync") {
                         Task {
                             await viewModel.startSync(modelContext: modelContext)
@@ -150,7 +194,7 @@ struct SyncSheetView: View {
                         }
                     }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(viewModel.isSyncing || viewModel.syncSearchQuery.isEmpty)
+                    .disabled(viewModel.isSyncing || viewModel.isReanalyzing || viewModel.syncSearchQuery.isEmpty)
                 }
             }
         }
