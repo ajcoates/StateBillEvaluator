@@ -85,7 +85,9 @@ struct CompaniesView: View {
                     name: detail.name,
                     industry: entry.industry,
                     reason: entry.reason,
-                    ticker: detail.ticker
+                    ticker: detail.ticker,
+                    parentCompany: detail.parentCompany,
+                    parentTicker: detail.parentTicker
                 ))
             }
         }
@@ -98,6 +100,8 @@ struct CompanyInfo: Identifiable {
     let industry: String
     let reason: String
     var ticker: String?
+    var parentCompany: String?
+    var parentTicker: String?
     var id: String { "\(name)-\(industry)" }
 }
 
@@ -127,6 +131,16 @@ struct CompanySection: View {
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(Color.secondary.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                        if company.ticker == nil, let parent = company.parentCompany {
+                            let label = if let pt = company.parentTicker { "Subsidiary of \(parent) (\(pt))" } else { "Subsidiary of \(parent)" }
+                            Text(label)
+                                .font(.caption2)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.orange)
                                 .clipShape(Capsule())
                         }
                     }

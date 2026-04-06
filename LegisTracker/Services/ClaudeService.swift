@@ -83,10 +83,10 @@ actor ClaudeService {
         Respond with ONLY valid JSON in this exact format, no other text:
         {
           "winners": [
-            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "company_details": [{"name": "Company1", "scale": "global", "ticker": "TICK"}, {"name": "Company2", "scale": "regional", "ticker": null}], "reason": "Brief explanation"}
+            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "company_details": [{"name": "Company1", "scale": "global", "ticker": "TICK", "parent_company": null, "parent_ticker": null}, {"name": "Company2", "scale": "regional", "ticker": null, "parent_company": "ParentCo", "parent_ticker": "PTCK"}], "reason": "Brief explanation"}
           ],
           "losers": [
-            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "company_details": [{"name": "Company1", "scale": "national", "ticker": "TICK"}, {"name": "Company2", "scale": "local", "ticker": null}], "reason": "Brief explanation"}
+            {"industry": "Industry Name", "companies": ["Company1", "Company2"], "company_details": [{"name": "Company1", "scale": "national", "ticker": "TICK", "parent_company": null, "parent_ticker": null}, {"name": "Company2", "scale": "local", "ticker": null, "parent_company": null, "parent_ticker": null}], "reason": "Brief explanation"}
           ]
         }
 
@@ -94,12 +94,14 @@ actor ClaudeService {
 
         For "ticker", provide the stock ticker symbol (e.g. "AMZN", "AAPL") if the company is publicly traded, or null if it is private.
 
+        For "parent_company" and "parent_ticker": if a company is private (ticker is null) but owned by a publicly traded parent company, provide the parent's name and ticker symbol (e.g. Instagram would have parent_company "Meta Platforms" and parent_ticker "META"). Otherwise set both to null.
+
         Include 2-4 entries for each of winners and losers. List 1-3 well-known public companies per industry where applicable, including a mix of large and smaller regional companies when relevant. If no specific companies are relevant, use empty arrays for companies and company_details.
         """
 
         let requestBody = ClaudeRequest(
             model: "claude-sonnet-4-5-20250929",
-            max_tokens: 1000,
+            max_tokens: 1200,
             messages: [ClaudeMessage(role: "user", content: prompt)]
         )
 

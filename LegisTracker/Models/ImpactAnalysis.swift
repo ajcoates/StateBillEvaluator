@@ -26,13 +26,17 @@ struct CompanyDetail: Codable, Identifiable {
     let name: String
     let scale: String // "local", "regional", "national", "global"
     let ticker: String?
+    let parentCompany: String?
+    let parentTicker: String?
 
     var id: String { name }
 
-    init(name: String, scale: String, ticker: String? = nil) {
+    init(name: String, scale: String, ticker: String? = nil, parentCompany: String? = nil, parentTicker: String? = nil) {
         self.name = name
         self.scale = scale
         self.ticker = ticker
+        self.parentCompany = parentCompany
+        self.parentTicker = parentTicker
     }
 
     init(from decoder: Decoder) throws {
@@ -40,10 +44,14 @@ struct CompanyDetail: Codable, Identifiable {
         name = try container.decode(String.self, forKey: .name)
         scale = try container.decode(String.self, forKey: .scale)
         ticker = try container.decodeIfPresent(String.self, forKey: .ticker)
+        parentCompany = try container.decodeIfPresent(String.self, forKey: .parentCompany)
+        parentTicker = try container.decodeIfPresent(String.self, forKey: .parentTicker)
     }
 
     private enum CodingKeys: String, CodingKey {
         case name, scale, ticker
+        case parentCompany = "parent_company"
+        case parentTicker = "parent_ticker"
     }
 
     var isLargeCap: Bool {

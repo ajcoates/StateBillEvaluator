@@ -47,6 +47,8 @@ struct CompanyRankingsView: View {
                         existing.industries.insert(entry.industry)
                         existing.billLinks.append(billLink)
                         if existing.ticker == nil { existing.ticker = detail.ticker }
+                        if existing.parentCompany == nil { existing.parentCompany = detail.parentCompany }
+                        if existing.parentTicker == nil { existing.parentTicker = detail.parentTicker }
                         gainerCounts[key] = existing
                     } else {
                         gainerCounts[key] = CompanyRanking(
@@ -56,7 +58,9 @@ struct CompanyRankingsView: View {
                             industries: [entry.industry],
                             billLinks: [billLink],
                             isLargeCap: detail.isLargeCap,
-                            ticker: detail.ticker
+                            ticker: detail.ticker,
+                            parentCompany: detail.parentCompany,
+                            parentTicker: detail.parentTicker
                         )
                     }
                 }
@@ -71,6 +75,8 @@ struct CompanyRankingsView: View {
                         existing.industries.insert(entry.industry)
                         existing.billLinks.append(billLink)
                         if existing.ticker == nil { existing.ticker = detail.ticker }
+                        if existing.parentCompany == nil { existing.parentCompany = detail.parentCompany }
+                        if existing.parentTicker == nil { existing.parentTicker = detail.parentTicker }
                         loserCounts[key] = existing
                     } else {
                         loserCounts[key] = CompanyRanking(
@@ -80,7 +86,9 @@ struct CompanyRankingsView: View {
                             industries: [entry.industry],
                             billLinks: [billLink],
                             isLargeCap: detail.isLargeCap,
-                            ticker: detail.ticker
+                            ticker: detail.ticker,
+                            parentCompany: detail.parentCompany,
+                            parentTicker: detail.parentTicker
                         )
                     }
                 }
@@ -257,6 +265,8 @@ struct CompanyRanking: Identifiable {
     var billLinks: [(title: String, url: String)]
     var isLargeCap: Bool
     var ticker: String?
+    var parentCompany: String?
+    var parentTicker: String?
 
     var id: String { name.lowercased() }
 
@@ -329,6 +339,16 @@ struct RankingColumn: View {
                                                 .padding(.horizontal, 6)
                                                 .padding(.vertical, 2)
                                                 .background(Color.secondary.opacity(0.15))
+                                                .clipShape(Capsule())
+                                        }
+                                        if company.ticker == nil, let parent = company.parentCompany {
+                                            let label = if let pt = company.parentTicker { "Subsidiary of \(parent) (\(pt))" } else { "Subsidiary of \(parent)" }
+                                            Text(label)
+                                                .font(.caption2)
+                                                .foregroundStyle(.white)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(Color.orange)
                                                 .clipShape(Capsule())
                                         }
                                         Spacer()
